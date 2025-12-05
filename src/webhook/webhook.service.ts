@@ -9,30 +9,27 @@ export class WebhookService {
   ) {}
 
   async save(payload: any) {
-    const fields = payload?.resource?.revision?.fields || {};
-    const workItemId = payload?.resource?.workItemId;
-    const url = payload?.resource?._links?.html?.href;
+    const revision = payload.resource?.revision;
 
-    if (!workItemId) return null;
+    if (!revision) return;
 
-    const doc = {
-      workItemId,
-      tipo: fields['System.WorkItemType'] || null,
-      titulo: fields['System.Title'] || null,
-      sprint: fields['System.IterationPath'] || null,
-      status: fields['System.State'] || null,
-      responsavel: fields['System.AssignedTo'] || null,
-      criadoEm: fields['System.CreatedDate']
-        ? new Date(fields['System.CreatedDate'])
-        : null,
-      alteradoEm: fields['System.ChangedDate']
-        ? new Date(fields['System.ChangedDate'])
-        : null,
-      tags: fields['System.Tags'] || null,
-      url: url || null,
-    };
+    const doc = new this.webhookModel({
+      workItemId: revision.id,
+      rev: revision.rev,
+      title: revision.fields['System.Title'],
+      state: revision.fields['System.State'],
+      iterationPath: revision.fields['System.IterationPath'],
+      assignedTo: revision.fields['System.AssignedTo'],
+      changedBy: revision.fields['System.ChangedBy'],
+      changedDate: revision.fields['System.ChangedDate'],
+      createdDate: revision.fields['System.CreatedDate'],
+      createdBy: revision.fields['System.CreatedBy'],
+      tags: revision.fields['System.Tags'],
+      parentId: revision.fields['System.Parent'],
+      raw: payload,
+    });
 
-    return new this.webhookModel(doc).save();
+    return doc.save();
   }
 
   async findAll() {
