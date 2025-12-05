@@ -8,7 +8,10 @@ export class WebhookController {
 
   @Post()
   async receive(@Body() body: any) {
-    console.log('Webhook recebido:', JSON.stringify(body, null, 2));
+    const bodyString = JSON.stringify(body, null, 2); // transforma em string com identação
+    const lines = bodyString.split('\n'); // quebra em linhas
+    const preview = lines.slice(0, 100).join('\n'); // pega apenas as 100 primeiras linhas
+    console.log('Webhook recebido (preview 100 linhas):\n', preview);
     await this.webhookService.save(body);
     return { status: 'OK' };
   }
