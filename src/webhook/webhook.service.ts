@@ -9,14 +9,23 @@ export class WebhookService {
   ) {}
 
   async save(payload: any) {
+    const revisionFields = payload?.resource?.revision?.fields || {};
+    const workItemId = payload?.resource?.workItemId;
+    const url = payload?.resource?._links?.html?.href;
+
+    if (!workItemId) return null;
+
     const filteredPayload = {
-      id: payload.resource?.id,
-      tipo: payload.resource?.fields?.['System.WorkItemType'],
-      titulo: payload.resource?.fields?.['System.Title'],
-      sprint: payload.resource?.fields?.['System.IterationPath'],
-      criadoEm: payload.resource?.fields?.['System.CreatedDate'],
-      atualizadoEm: payload.resource?.fields?.['System.ChangedDate'],
-      status: payload.resource?.fields?.['System.State'],
+      workItemId,
+      tipo: revisionFields['System.WorkItemType'] || null,
+      titulo: revisionFields['System.Title'] || null,
+      sprint: revisionFields['System.IterationPath'] || null,
+      status: revisionFields['System.State'] || null,
+      responsavel: revisionFields['System.AssignedTo'] || null,
+      criadoEm: revisionFields['System.CreatedDate'] || null,
+      alteradoEm: revisionFields['System.ChangedDate'] || null,
+      tags: revisionFields['System.Tags'] || null,
+      url: url || null,
     };
 
     const doc = new this.webhookModel(filteredPayload);
