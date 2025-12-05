@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  monitoramento-db:
+    image: mongo:7
+    container_name: monitoramento-db
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  monitoramento-pbi:
+    build: .
+    container_name: monitoramento-pbi
+    ports:
+      - '3000:3000'
+    depends_on:
+      - monitoramento-db
+    environment:
+      - .env
+    restart: always
+
+volumes:
+  mongo_data:
