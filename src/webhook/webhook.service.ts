@@ -9,30 +9,11 @@ export class WebhookService {
   ) {}
 
   async save(payload: any) {
-    const revision = payload.resource?.revision;
-
-    if (!revision) return;
-
-    const doc = new this.webhookModel({
-      workItemId: revision.id,
-      rev: revision.rev,
-      title: revision.fields['System.Title'],
-      state: revision.fields['System.State'],
-      iterationPath: revision.fields['System.IterationPath'],
-      assignedTo: revision.fields['System.AssignedTo'],
-      changedBy: revision.fields['System.ChangedBy'],
-      changedDate: revision.fields['System.ChangedDate'],
-      createdDate: revision.fields['System.CreatedDate'],
-      createdBy: revision.fields['System.CreatedBy'],
-      tags: revision.fields['System.Tags'],
-      parentId: revision.fields['System.Parent'],
-      raw: payload,
-    });
-
+    const doc = new this.webhookModel({ body: payload });
     return doc.save();
   }
 
   async findAll() {
-    return this.webhookModel.find().sort({ criadoEm: -1 }).exec();
+    return this.webhookModel.find().sort({ timestamp: -1 }).exec();
   }
 }
