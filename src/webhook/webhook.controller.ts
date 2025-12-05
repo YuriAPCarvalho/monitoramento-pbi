@@ -8,11 +8,21 @@ export class WebhookController {
 
   @Post()
   async receive(@Body() body: any) {
-    const bodyString = JSON.stringify(body, null, 2); // transforma em string com identação
-    const lines = bodyString.split('\n'); // quebra em linhas
-    const preview = lines.slice(0, 100).join('\n'); // pega apenas as 100 primeiras linhas
-    console.log('Webhook recebido (preview 100 linhas):\n', preview);
-    await this.webhookService.save(body);
+    const filtered = {
+      workItemId: body.resource.workItemId,
+      title: body.resource.revision.fields['System.Title'],
+      state: body.resource.revision.fields['System.State'],
+      assignedTo: body.resource.revision.fields['System.AssignedTo'],
+      iterationPath: body.resource.revision.fields['System.IterationPath'],
+      revisedDate: body.resource.revisedDate,
+      revisionNumber: body.resource.rev,
+      changedBy: body.resource.revision.fields['System.ChangedBy'],
+      url: body.resource._links.html.href,
+    };
+
+    console.log('Dados filtrados:', filtered);
+
+    await this.webhookService.save(filtered);
     return { status: 'OK' };
   }
 
