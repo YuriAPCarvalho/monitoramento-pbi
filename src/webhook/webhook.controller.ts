@@ -14,7 +14,7 @@ export class WebhookController {
       changedBy: body.resource.revision.fields['System.ChangedBy'], // Quem fez a alteração
       url: body.resource._links.html.href, // URL da PBI
       BoardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna do quadro atual
-      oldValue: body.resource.revision.fields['System.State.oldValue'], // Valor anterior do estado
+      oldValue: body.resource.fields['System.State']?.oldValue, // Estado anterior
     };
 
     console.log('Dados filtrados:', filtered);
