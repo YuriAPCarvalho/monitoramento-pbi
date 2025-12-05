@@ -14,10 +14,12 @@ export class WebhookController {
       workItemId: body.resource.workItemId, // ID da PBI
       title: body.resource.revision.fields['System.Title'], // Título da PBI
       iterationPath: body.resource.revision.fields['System.IterationPath'], // Caminho da Iteração e sprint
+      displayName: body.resource.revisedBy.displayName, // Nome do responsável pela PBI
       changedBy: body.resource.revision.fields['System.ChangedBy'], // Quem fez a alteração
       url: body.resource._links.html.href, // URL da PBI
       BoardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna do quadro atual
       oldValue: body.resource.fields['System.BoardColumn']?.oldValue, // Estado anterior
+      tag: body.resource.revision.fields['System.Tags'], // Tags associadas
       timestamp: date,
     };
 
