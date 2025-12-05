@@ -5,7 +5,6 @@ import { WebhookService } from './webhook.service';
 import { Schema } from 'mongoose';
 
 const WebhookSchema = new Schema({
-  timestamp: { type: Date, default: Date.now },
   body: { type: Object },
 });
 

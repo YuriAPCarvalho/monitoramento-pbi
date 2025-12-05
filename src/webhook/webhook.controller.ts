@@ -7,6 +7,9 @@ export class WebhookController {
 
   @Post()
   async receive(@Body() body: any) {
+    const date = new Date();
+    date.setHours(date.getHours() - 4);
+
     const filtered = {
       workItemId: body.resource.workItemId, // ID da PBI
       title: body.resource.revision.fields['System.Title'], // Título da PBI
@@ -14,16 +17,14 @@ export class WebhookController {
       changedBy: body.resource.revision.fields['System.ChangedBy'], // Quem fez a alteração
       url: body.resource._links.html.href, // URL da PBI
       BoardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna do quadro atual
-      oldValue: body.resource.fields['System.State']?.oldValue, // Estado anterior
+      oldValue: body.resource.fields['System.BoardColumn']?.oldValue, // Estado anterior
+      timestamp: date,
     };
-
-    console.log('Dados filtrados:', filtered);
 
     await this.webhookService.save(filtered);
     return { status: 'OK' };
   }
 
-  // Endpoint opcional para visualizar logs
   @Get()
   async getAll() {
     return this.webhookService.findAll();
