@@ -1,6 +1,5 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
-import { log } from 'console';
 
 @Controller('webhook')
 export class WebhookController {
@@ -9,15 +8,13 @@ export class WebhookController {
   @Post()
   async receive(@Body() body: any) {
     const filtered = {
-      workItemId: body.resource.workItemId,
-      title: body.resource.revision.fields['System.Title'],
-      state: body.resource.revision.fields['System.State'],
-      assignedTo: body.resource.revision.fields['System.AssignedTo'],
-      iterationPath: body.resource.revision.fields['System.IterationPath'],
-      revisedDate: body.resource.revisedDate,
-      revisionNumber: body.resource.rev,
-      changedBy: body.resource.revision.fields['System.ChangedBy'],
-      url: body.resource._links.html.href,
+      workItemId: body.resource.workItemId, // ID da PBI
+      title: body.resource.revision.fields['System.Title'], // Título da PBI
+      iterationPath: body.resource.revision.fields['System.IterationPath'], // Caminho da Iteração e sprint
+      changedBy: body.resource.revision.fields['System.ChangedBy'], // Quem fez a alteração
+      url: body.resource._links.html.href, // URL da PBI
+      BoardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna do quadro atual
+      oldValue: body.resource.revision.fields['System.State.oldValue'], // Valor anterior do estado
     };
 
     console.log('Dados filtrados:', filtered);
