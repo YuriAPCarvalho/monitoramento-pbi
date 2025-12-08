@@ -1,9 +1,13 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
+import { WebhookCurrentService } from './webhook-current.service';
 
 @Controller('webhook')
 export class WebhookController {
-  constructor(private readonly webhookService: WebhookService) {}
+  constructor(
+    private readonly webhookService: WebhookService,
+    private readonly webhookCurrentService: WebhookCurrentService,
+  ) {}
 
   @Post()
   async receive(@Body() body: any) {
@@ -17,18 +21,21 @@ export class WebhookController {
       displayName: body.resource.revision.fields['System.AssignedTo'], // Nome do responsável
       changedBy: body.resource.revision.fields['System.ChangedBy'], // Quem fez a alteração
       url: body.resource._links.html.href, // URL da PBI
-      BoardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna do quadro atual
+      boardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna atual
       oldValue: body.resource.fields['System.BoardColumn']?.oldValue, // Estado anterior
-      tag: body.resource.revision.fields['System.Tags'], // Tags associadas
+      tag: body.resource.revision.fields['System.Tags'], // Tags
       timestamp: date,
     };
 
     await this.webhookService.save(filtered);
+
+    await this.webhookCurrentService.upsert(filtered);
+
     return { status: 'OK' };
   }
 
   @Get()
   async getAll() {
-    return this.webhookService.findAll();
+    return this.webhookService.findAll(); // histórico
   }
 }

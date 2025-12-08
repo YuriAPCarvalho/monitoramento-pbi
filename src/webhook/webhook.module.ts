@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { WebhookController } from './webhook.controller';
 import { WebhookService } from './webhook.service';
-import { Schema } from 'mongoose';
-
-const WebhookSchema = new Schema({
-  body: { type: Object },
-});
+import { WebhookCurrentService } from './webhook-current.service';
+import { WebhookSchema, WebhookCurrentSchema } from './webhook.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Webhook', schema: WebhookSchema }]),
+    MongooseModule.forFeature([
+      { name: 'Webhook', schema: WebhookSchema },
+      { name: 'WebhookCurrent', schema: WebhookCurrentSchema },
+    ]),
   ],
   controllers: [WebhookController],
-  providers: [WebhookService],
+  providers: [WebhookService, WebhookCurrentService],
 })
 export class WebhookModule {}
