@@ -24,6 +24,8 @@ export class WebhookController {
       boardColumn: body.resource.revision.fields['System.BoardColumn'], // Coluna atual
       oldValue: body.resource.fields['System.BoardColumn']?.oldValue, // Estado anterior
       tag: body.resource.revision.fields['System.Tags'], // Tags
+      targetDate:
+        body.resource.revision.fields['Microsoft.VSTS.Scheduling.TargetDate'], // Data alvo
       timestamp: date,
     };
 
